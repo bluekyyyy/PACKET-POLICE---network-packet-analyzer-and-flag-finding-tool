@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Packet Police</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo"><i class="fa-solid fa-shield-halved"></i> Packet<span>_Police</span></div>
+        <div class="controls">
+            <input type="file" id="pcapInput" accept=".pcap,.pcapng" class="hidden-input">
+            <input type="file" id="folderInput" webkitdirectory directory multiple class="hidden-input">
+            
+            <input type="text" id="filterInput" placeholder="Wireshark filter (e.g., tcp.port == 80)" class="filter-input">
+            <input type="text" id="apiKeyInput" placeholder="API / Decryption Key" class="filter-input api-key-input">
+        </div>
+    </header>
+
+    <div class="layout-wrapper">
+        <aside class="sidebar pane">
+            <div class="sidebar-section">
+                <h3><i class="fa-solid fa-folder-tree"></i> Scanner Controls</h3>
+                <div class="button-group">
+                    <button id="selectFileBtn" class="btn ghost-btn"><i class="fa-solid fa-file"></i> Select File</button>
+                    <button id="selectFolderBtn" class="btn ghost-btn"><i class="fa-solid fa-folder-open"></i> Select Folder</button>
+                </div>
+                <div class="selected-target" id="targetDisplay">No file selected</div>
+                
+                <button id="uploadBtn" class="btn primary-btn full-width"><i class="fa-solid fa-magnifying-glass-chart"></i> Analyze Traffic</button>
+                <button id="flagBtn" class="btn neon-btn full-width"><i class="fa-solid fa-crosshairs"></i> Auto-Hunt Flags</button>
+                <button id="helpBtn" class="btn ghost-btn full-width" style="margin-top:10px;"><i class="fa-solid fa-book"></i> Manual</button>
+                <button id="colorBtn" class="btn ghost-btn full-width" style="margin-top:10px;"><i class="fa-solid fa-palette"></i> Colors</button>
+            </div>
+
+            <div class="sidebar-section flags-section" style="flex:1; display:flex; flex-direction:column; min-height:0;">
+                <h3><i class="fa-solid fa-flag"></i> Found Flags</h3>
+                <ul id="flagList" style="overflow-y:auto; flex:1; margin:0; padding-left:20px;">
+                    <li style="color: var(--text-main);"><i class="fa-solid fa-circle-info"></i> Awaiting scan...</li>
+                </ul>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="quick-filters">
+                <span><i class="fa-solid fa-filter"></i> Quick Filters:</span>
+                <button class="filter-tag" data-filter="tcp">TCP</button>
+                <button class="filter-tag" data-filter="udp">UDP</button>
+                <button class="filter-tag" data-filter="http">HTTP</button>
+                <button class="filter-tag" data-filter="dns">DNS</button>
+                <button class="filter-tag" data-filter="ip.addr == ">IP Address</button>
+            </div>
+
+            <section class="pane packet-list">
+                <table id="packetTable">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Source</th>
+                            <th>Destination</th>
+                            <th>Protocol</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="packetBody">
+                        <tr><td colspan='5' style="text-align:center;">Select a file or folder from the sidebar to begin.</td></tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <div class="bottom-split">
+                <section class="pane packet-details">
+                    <h3><i class="fa-solid fa-diagram-project"></i> Packet Tree</h3>
+                    <div id="detailsView" class="tree-view">Select a packet to view layers...</div>
+                </section>
+                
+                <section class="pane hex-view">
+                    <h3><i class="fa-solid fa-hashtag"></i> Hex Dump</h3>
+                    <pre id="hexDumpContent">Select a packet to view raw bytes...</pre>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <div id="manualModal" class="modal">
+        <div class="modal-content pane">
+            <span class="close-btn" id="closeModal">&times;</span>
+            <h2 style="color: var(--accent-blue); margin-top: 0;"><i class="fa-solid fa-book"></i> Enterprise Manual</h2>
+            <hr style="border-color: var(--border-color); margin-bottom: 20px;">
+            <p><strong><i class="fa-solid fa-magnifying-glass-chart"></i> Analyze PCAP:</strong> Upload a file and view standard Wireshark layer dissections and raw hex dumps.</p>
+            <p><strong><i class="fa-solid fa-crosshairs"></i> Auto-Hunt Flags:</strong> Scans raw binary streams, ignoring protocol boundaries, to stitch together fragmented payloads.</p>
+            <p><strong><i class="fa-solid fa-filter"></i> Filters:</strong> Uses standard PyShark/Wireshark syntax.</p>
+            <p><em>*Note: All panels are manually adjustable. Drag the borders to resize.</em></p>
+        </div>
+    </div>
+
+    <div id="colorModal" class="modal">
+        <div class="modal-content pane">
+            <span class="close-btn" id="closeColorModal">&times;</span>
+            <h2 style="color: var(--accent-neon); margin-top: 0;"><i class="fa-solid fa-palette"></i> Protocol Colors</h2>
+            <hr style="border-color: var(--border-color); margin-bottom: 20px;">
+            <p style="font-size: 1.1rem; color: #8b949e;">Click a color to edit it. New protocols will be added here automatically.</p>
+            <div id="colorList" style="display: flex; flex-direction: column; gap: 10px; max-height: 400px; overflow-y: auto; padding-right: 10px;">
+                </div>
+            <button id="resetColorsBtn" class="btn ghost-btn full-width" style="margin-top: 20px; border-color: #ff4a4a; color: #ff4a4a;"><i class="fa-solid fa-rotate-right"></i> Reset to Defaults</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
