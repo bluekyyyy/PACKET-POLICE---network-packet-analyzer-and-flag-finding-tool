@@ -1,8 +1,23 @@
 --HOW TO RUN--
 
-uvicorn backend.main:app --reload
+sudo apt update
+sudo apt install python3-venv python3-full
 
-go live on index.html
+python3 -m venv venv
+
+source venv/bin/activate
+
+pip install fastapi uvicorn pyshark python-multipart
+
+sudo apt update
+sudo apt install tshark
+
+uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+cd backend
+uvicorn main:app --reload
+
+open index.html in ur browser
 
 <img width="2558" height="1351" alt="image" src="https://github.com/user-attachments/assets/7a2acf0f-3d72-4cfb-b64f-10e9c5737b4b" />
 
