@@ -51,3 +51,6 @@ This makes it particularly useful for **network forensics**, **packet analysis**
 ![](https://github.com/user-attachments/assets/d41ad40d-55a6-4b04-9531-a0aa312e32a7)
 
 ---
+## License
+
+This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
